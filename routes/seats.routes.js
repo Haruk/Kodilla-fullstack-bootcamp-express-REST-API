@@ -1,64 +1,70 @@
 const express = require('express');
 const router = express.Router();
-const db = require('../db');
+const DB = require('../db');
 const { v4: uuidv4 } = require('uuid');
 
-const database = db.seats;
-
-// get all seats
-router.route('/seats').get((req, res) => {
-  res.json(database);
+// tutaj
+router.get('/seats', (req, res) => {
+    res.json(DB.seats);
 });
 
-// get seat by id
-router.route('/seats/:id').get((req, res) => {
-  const index = database.findIndex((element) => element.id == req.params.id);
+router.get('/seats/:id', (req, res) => {
+    const searchEntrie = DB.seats.filter(entrie => `${entrie.id}` === req.params.id ? true : false)[0];
 
-  if (index != -1) {
-    res.json(database[index]);
-  } else {
-    res.status(404).json({ message: 'Not found...' });
-  }
+    if (searchEntrie) {
+        res.json(searchEntrie);
+    } else {
+        res.json({ message: `ERROR` });
+    }
 });
 
-// add seats
-router.route('/seats').post((req, res) => {
-  database.push({
-    id: uuidv4(),
-    day: req.body.day,
-    seat: req.body.seat,
-    client: req.body.client,
-    email: req.body.email,
-  });
+router.post('/seats', (req, res) => {
 
-  res.json({ message: 'OK' });
+    const isTaken = DB.seats.some(seat => {
+        if (`${seat.day}` === `${req.body.day}` && `${seat.seat}` === `${req.body.seat}`) {
+            return true
+        } else {
+            return false
+        }
+    })
+
+    if (isTaken) {
+        res.status(409).send({ message: "The slot is already taken..." });
+    } else {
+
+        DB.seats.push({
+            seat: req.body.seat,
+            client: req.body.client,
+            email: req.body.email,
+            day: req.body.day,
+            id: uuidv4(),
+        })
+
+        res.json({ message: `OK` });
+    }
+
 });
 
-// modify seat by id
-router.route('/seats/:id').put((req, res) => {
-  const index = database.findIndex((element) => element.id == req.params.id);
+router.put('/seats/:id', (req, res) => {
+    DB.seats = DB.seats.map(entrie => `${entrie.id}` === `${req.params.id}` ? {
+        ...entrie,
+        seat: req.body.seat,
+        client: req.body.client,
+        email: req.body.email,
+        day: req.body.day,
+    } : entrie)
 
-  if (index != -1) {
-    database[index].day = req.body.day || database[index].day;
-    database[index].seat = req.body.seat || database[index].seat;
-    database[index].client = req.body.client || database[index].client;
-    database[index].email = req.body.email || database[index].email;
-    res.json({ message: 'OK' });
-  } else {
-    res.status(404).json({ message: 'Not found...' });
-  }
+    res.json({ message: `OK` });
 });
 
-// delete seat by id
-router.route('/seats/:id').delete((req, res) => {
-  const index = database.findIndex((element) => element.id == req.params.id);
+router.delete('/seats/:id', (req, res) => {
+    DB.seats = DB.seats.filter(entrie => `${entrie.id}` === `${req.params.id}` ? false : true);
 
-  if (index != -1) {
-    database.splice(index, 1);
-    res.json({ message: 'OK' });
-  } else {
-    res.status(404).json({ message: 'Not found...' });
-  }
+    res.json({ message: `OK` });
 });
+
+
+
+
 
 module.exports = router;

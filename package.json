@@ -1,13 +1,17 @@
 {
-  "name": "REST_API",
+  "name": "festival",
   "version": "1.0.0",
+  "description": "",
   "main": "index.js",
-  "license": "MIT",
-  "dependencies": {
-    "express": "4.17.1",
-    "nodemon": "^2.0.20"
-  },
   "scripts": {
-    "start": "nodemon server.js"
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  
+
+  "dependencies": {
+    "client": "^0.0.1",
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "uuid": "^9.0.0"
   }
 }
