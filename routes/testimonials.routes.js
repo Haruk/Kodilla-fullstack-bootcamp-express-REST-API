@@ -1,58 +1,82 @@
 const express = require('express');
 const router = express.Router();
-const DB = require('../db');
+// const db = require('../db');
+// const { v4: uuidv4 } = require('uuid');
+// const Testimonial = require('../models/testimonials.models');
+const testimonialsController = require('../controllers/testimonials.controller');
 
-router.get('/testimonials', (req, res) => {
-    res.json(DB.testimonials);
-});
+// const database = db.testimonials;
 
-router.get('/testimonials/random', (req, res) => {
-    const randomEntrie = DB.testimonials[Math.floor(Math.random() * (DB.length - 0) + 0)]
+// get random testimonial
+// router.route('/testimonials/random').get((req, res) => {
+//   const random = Math.floor(Math.random() * database.length);
+//   res.json(database[random]);
+// });
 
-    if (randomEntrie) {
-        res.json(randomEntrie);
-    } else {
-        res.json({ message: `ERROR` });
-    }
+router.get('/testimonials/random', testimonialsController.getRandom);
 
-});
+// get all testimonials
+// router.route('/testimonials').get((req, res) => {
+//   res.json(database);
+// });
 
-router.get('/testimonials/:id', (req, res) => {
-    const searchEntrie = DB.testimonials.filter(entrie => `${entrie.id}` === req.params.id ? true : false)[0];
+router.get('/testimonials', testimonialsController.getAll);
 
-    if (searchEntrie) {
-        res.json(searchEntrie);
-    } else {
-        res.json({ message: `ERROR` });
-    }
-});
+// get testimonial by id
+// router.route('/testimonials/:id').get((req, res) => {
+//   const index = database.findIndex((element) => element.id == req.params.id);
 
+//   if (index != -1) {
+//     res.json(database[index]);
+//   } else {
+//     res.status(404).json({ message: 'Not found...' });
+//   }
+// });
 
-router.post('/testimonials', (req, res) => {
+router.get('/testimonials/:id', testimonialsController.getById);
 
-    DB.testimonials.push({
-        author: req.body.author,
-        text: req.body.text,
-        id: uuidv4(),
-    })
-    res.json({ message: `OK` });
-});
+// add testimonial
+// router.route('/testimonials').post((req, res) => {
+//   database.push({
+//     id: uuidv4(),
+//     author: req.body.author,
+//     text: req.body.text,
+//   });
 
-router.put('/testimonials/:id', (req, res) => {
-    DB.testimonials = DB.testimonials.map(entrie => `${entrie.id}` === `${req.params.id}` ? {
-        ...entrie,
-        author: req.params.author,
-        text: req.params.text
-    } : entrie)
+//   res.json({ message: 'OK' });
+// });
 
-    res.json({ message: `OK` });
-});
+router.post('/testimonials', testimonialsController.add);
 
-router.delete('/testimonials/:id', (req, res) => {
-    DB.testimonials = DB.testimonials.filter(entrie => `${entrie.id}` === `${req.params.id}` ? false : true);
+// modify testimonial by id
+// router.route('/testimonials/:id').put((req, res) => {
+//   const index = database.findIndex((element) => element.id == req.params.id);
 
-    res.json({ message: `OK` });
-});
+//   if (index != -1) {
+//     database[index] = {
+//       ...database[index],
+//       ...req.body,
+//     };
+//     res.json({ message: 'OK' });
+//   } else {
+//     res.status(404).json({ message: 'Not found...' });
+//   }
+// });
 
+router.put('/testimonials/:id', testimonialsController.edit);
+
+// delete testimonial by id
+// router.route('/testimonials/:id').delete((req, res) => {
+//   const index = database.findIndex((element) => element.id == req.params.id);
+
+//   if (index != -1) {
+//     database.splice(index, 1);
+//     res.json({ message: 'OK' });
+//   } else {
+//     res.status(404).json({ message: 'Not found...' });
+//   }
+// });
+
+router.delete('/testimonials/:id', testimonialsController.remove);
 
 module.exports = router;
