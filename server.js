@@ -36,7 +36,7 @@ app.use((req, res) => {
 
 mongoose.connect(
   'mongodb://localhost:27017/NewWaveDB',
-
+//  'mongodb+srv://Aleksandra:RNwtrW%40Uqe3ewHN@clusterforfestival.ukdrmqm.mongodb.net/?retryWrites=true&w=majority',
   {
     useNewUrlParser: true,
   }
@@ -44,7 +44,7 @@ mongoose.connect(
 const db = mongoose.connection;
 
 db.once('open', () => {
-  console.log('Connected to the database');
+  console.log('Connected to the database! YEY!');
 });
 db.on('error', (err) => console.log('Error ' + err));
 
@@ -57,48 +57,3 @@ const io = socket(server);
 io.on('connection', (socket) => {
   console.log('new socket!', socket.id);
 });
-
-// app.get('/testimonials/random', (req, res) => {
-//   const random = Math.floor(Math.random() * db.testimonials.length);
-//   res.json(db.testimonials[random]);
-// });
-
-// app.get('/testimonials', (req, res) => {
-//   res.json(db.testimonials);
-// });
-
-// app.get('/testimonials/:id', (req, res) => {
-//   res.json(db.testimonials.filter((element) => element.id == req.params.id));
-// });
-
-// app.post('/testimonials', (req, res) => {
-//   db.testimonials.push({
-//     id: uuidv4(),
-//     author: req.body.author,
-//     text: req.body.text,
-//   });
-
-//   res.json({ message: 'OK' });
-// });
-
-// app.put('/testimonials/:id', (req, res) => {
-//   db.testimonials.map((element) => {
-//     if (element.id == req.params.id) {
-//       element.author = req.body.author;
-//       element.text = req.body.text;
-//     } else {
-//       return element;
-//     }
-//   });
-
-//   res.json({ message: 'OK' });
-// });
-
-// app.delete('/testimonials/:id', (req, res) => {
-//   const index = db.testimonials.findIndex(
-//     (element) => element.id == req.params.id
-//   );
-//   db.testimonials.splice(index, 1);
-
-//   res.json({ message: 'OK' });
-// });
