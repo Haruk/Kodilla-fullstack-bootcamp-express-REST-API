@@ -9,10 +9,13 @@ const concertsRoutes = require('./routes/concerts.routes');
 const seatsRoutes = require('./routes/seats.routes');
 const socket = require('socket.io');
 const mongoose = require('mongoose');
+const helmet = require('helmet');
+require('dotenv').config();
 
 // Serve static files from the React app
 app.use(express.static(path.join(__dirname, '/client/build')));
 
+app.use(helmet());
 app.use(cors());
 app.use(express.urlencoded({ extends: false }));
 app.use(express.json());
@@ -38,19 +41,26 @@ const NODE_ENV = process.env.NODE_ENV;
 let dbUri = '';
 
 // mongoose.connect(
-//   'mongodb://localhost:27017/NewWaveDB',
-// //  'mongodb+srv://Aleksandra:RNwtrW%40Uqe3ewHN@clusterforfestival.ukdrmqm.mongodb.net/?retryWrites=true&w=majority',
+//   // 'mongodb://localhost:27017/NewWaveDB',
+//  'mongodb+srv://haruka.lex:${process.env.DB_PASS}@clusterforfestival.ukdrmqm.mongodb.net/?retryWrites=true&w=majority',
 //   {
 //     useNewUrlParser: true,
 //   }
 // );
 
-if (NODE_ENV === 'test') {
-  dbUri = 'mongodb://localhost:27017/NewWaveDBtest';
-} else {
+// if (NODE_ENV === 'test') {
+//   dbUri = 'mongodb://localhost:27017/NewWaveDBtest';
+// } else {
+//   dbUri =
+//      'mongodb+srv://haruka.lex:${process.env.DB_PASS}@clusterforfestival.ukdrmqm.mongodb.net/?retryWrites=true&w=majority';
+// }
+
+if (NODE_ENV === 'production')
   dbUri =
-     'mongodb+srv://Aleksandra:RNwtrW%40Uqe3ewHN@clusterforfestival.ukdrmqm.mongodb.net/?retryWrites=true&w=majority';
-}
+    `mongodb+srv://haruka.lex:${process.env.DB_PASS}@kodilla-seatsapp.eao3ckp.mongodb.net/kodilla-seatsApp?retryWrites=true&w=majority`;
+else if (NODE_ENV === 'test') dbUri = 'mongodb://localhost:27017/NewWaveDBtest';
+else dbUri = 'mongodb://localhost:27017/NewWaveDB';
+
 mongoose.connect(dbUri, { useNewUrlParser: true, useUnifiedTopology: true });
 const db = mongoose.connection;
 
