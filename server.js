@@ -34,22 +34,33 @@ app.use((req, res) => {
   res.status(404).json({ message: 'Not found...' });
 });
 
-mongoose.connect(
-  'mongodb://localhost:27017/NewWaveDB',
-//  'mongodb+srv://Aleksandra:RNwtrW%40Uqe3ewHN@clusterforfestival.ukdrmqm.mongodb.net/?retryWrites=true&w=majority',
-  {
-    useNewUrlParser: true,
-  }
-);
+const NODE_ENV = process.env.NODE_ENV;
+let dbUri = '';
+
+// mongoose.connect(
+//   'mongodb://localhost:27017/NewWaveDB',
+// //  'mongodb+srv://Aleksandra:RNwtrW%40Uqe3ewHN@clusterforfestival.ukdrmqm.mongodb.net/?retryWrites=true&w=majority',
+//   {
+//     useNewUrlParser: true,
+//   }
+// );
+
+if (NODE_ENV === 'test') {
+  dbUri = 'mongodb://localhost:27017/NewWaveDBtest';
+} else {
+  dbUri =
+     'mongodb+srv://Aleksandra:RNwtrW%40Uqe3ewHN@clusterforfestival.ukdrmqm.mongodb.net/?retryWrites=true&w=majority';
+}
+mongoose.connect(dbUri, { useNewUrlParser: true, useUnifiedTopology: true });
 const db = mongoose.connection;
 
 db.once('open', () => {
-  console.log('Connected to the database! YEY!');
+  // console.log('Connected to the database');
 });
 db.on('error', (err) => console.log('Error ' + err));
 
 const server = app.listen(process.env.PORT || 8000, () => {
-  console.log('Server is running on port: 8000');
+  // console.log('Server is running on port: 8000');
 });
 
 const io = socket(server);
@@ -57,3 +68,5 @@ const io = socket(server);
 io.on('connection', (socket) => {
   console.log('new socket!', socket.id);
 });
+
+module.exports = server;
